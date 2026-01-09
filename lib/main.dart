@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
       title: 'おかねメモ',
       theme: ThemeData(
         useMaterial3: true,
+        fontFamily: 'Rounded Mplus 1c',
       ),
       home: const MainPage(),
     );

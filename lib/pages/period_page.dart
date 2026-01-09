@@ -10,6 +10,7 @@ import '../widgets/bank_amount_row.dart';
 import '../widgets/period_date_selector.dart';
 import '../widgets/total_amount_row.dart';
 import '../utils/format_utils.dart';
+import '../utils/sort_entries.dart';
 
 class PeriodPage extends StatefulWidget {
   const PeriodPage({super.key});
@@ -72,12 +73,7 @@ class _PeriodPageState extends State<PeriodPage> {
             return const Center(child: Text('まだ記録がありません'));
           }
 
-          final entries = box.values.toList()
-            ..sort((a, b) {
-              final d = b.date.compareTo(a.date);
-              if (d != 0) return d;
-              return b.createdAt.compareTo(a.createdAt);
-            });
+          final entries = sortedEntries(box);
 
           final filtered = entries.where((e) {
             final d = DateTime(e.date.year, e.date.month, e.date.day);

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'period_page.dart';
+import '../theme.dart';
 import '../models/money_entry.dart';
 import '../modals/input_modal.dart';
-import '../theme.dart';
 import '../widgets/money_entry_card.dart';
-import 'period_page.dart';
+import '../utils/sort_entries.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -64,12 +65,7 @@ class _MainPageState extends State<MainPage> {
             );
           }
 
-          final entries = box.values.toList()
-            ..sort((a, b) {
-              final dateCompare = b.date.compareTo(a.date);
-              if (dateCompare != 0) return dateCompare;
-              return b.createdAt.compareTo(a.createdAt);
-            });
+          final entries = sortedEntries(box);
 
           return ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
