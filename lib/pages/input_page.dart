@@ -6,19 +6,19 @@ import '../models/money_type.dart';
 import '../models/money_entry.dart';
 import '../theme.dart';
 
-class InputModal extends StatefulWidget {
+class InputPage extends StatefulWidget {
   final MoneyEntry? entry; // nullなら新規、あれば編集
 
-  const InputModal({
+  const InputPage({
     super.key,
     this.entry,
   });
 
   @override
-  State<InputModal> createState() => _InputModalState();
+  State<InputPage> createState() => _InputPageState();
 }
 
-class _InputModalState extends State<InputModal> {
+class _InputPageState extends State<InputPage> {
   MoneyType selectedType = MoneyType.decrease;
   DateTime selectedDate = DateTime.now();
 
@@ -179,37 +179,33 @@ class _InputModalState extends State<InputModal> {
     final dateText =
         '${selectedDate.year}/${selectedDate.month}/${selectedDate.day}';
 
-    return Material(
-      color: Colors.transparent,
-      child: Center(
-        child: Container(
-          width: 360,
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: AppColors.background,
-            borderRadius: BorderRadius.circular(20),
+    return Scaffold( // Material から Scaffold に変更
+      backgroundColor: AppColors.background,
+      appBar: AppBar( // このAppBarは前回の修正で追加されているはずです
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        title: Text(
+          isEdit ? '記録を編集する' : '新しく記録する',
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: AppColors.pink,
           ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.pink),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: SafeArea( // 必要に応じてSafeAreaを追加すると、ノッチなどからの余白を自動で調整してくれます
+        child: SingleChildScrollView( // キーボードが表示された際に内容が隠れないように
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20), // 画面端からの余白
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            // mainAxisSize: MainAxisSize.min, // この行を削除するか、
+            // mainAxisSize: MainAxisSize.max, // こちらに変更してください。
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    isEdit ? '記録を編集する' : '新しく記録する',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.pink,
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  )
-                ],
-              ),
+              // ... 既存のInkWell、Text、Row、TextField、OutlinedButton、ElevatedButtonなどのウィジェット ...
 
               InkWell(
                 onTap: _pickDate,
@@ -317,4 +313,5 @@ class _InputModalState extends State<InputModal> {
       ),
     );
   }
+
 }

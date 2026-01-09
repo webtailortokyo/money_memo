@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'period_page.dart';
+import 'input_page.dart';
 import '../theme.dart';
 import '../models/money_entry.dart';
-import '../modals/input_modal.dart';
 import '../widgets/money_entry_card.dart';
 import '../utils/sort_entries.dart';
 
@@ -78,11 +78,11 @@ class _MainPageState extends State<MainPage> {
 
                 /// 編集
                 onTap: () async {
-                  await showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (_) => InputModal(entry: entry),
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => InputPage(entry: entry),
+                    ),
                   );
                 },
 
@@ -123,11 +123,11 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: AppColors.pink,
         shape: const CircleBorder(),
         onPressed: () async {
-          await showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (_) => const InputModal(),
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const InputPage(),
+            ),
           );
         },
         child: const Icon(Icons.add, color: Colors.black),
