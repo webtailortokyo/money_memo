@@ -1,0 +1,27 @@
+import 'package:flutter/material.dart';
+
+class BankAmountRow extends StatelessWidget {
+  final Widget amountText;
+
+  const BankAmountRow({
+    super.key,
+    required this.amountText,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Icon(
+          Icons.account_balance,
+          size: 16,
+          color: Colors.black54,
+        ),
+        const SizedBox(width: 6),
+        amountText,
+      ],
+    );
+  }
+}

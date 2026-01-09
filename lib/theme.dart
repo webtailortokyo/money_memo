@@ -1,0 +1,21 @@
+import 'package:flutter/material.dart';
+
+class AppColors {
+  static const background = Color(0xFFFFFBF0);
+  static const pink = Color(0xFFFFB6D9);
+
+  static const decrease = Color(0xFFFF6467);
+  static const decreaseBg = Color(0xFFFFE2E2);
+  static const decreaseAmount = Color(0xFFC10007);
+
+  static const increase = Color(0xFF05DF72);
+  static const increaseBg = Color(0xFFDBFCE7);
+  static const increaseAmount = Color(0xFF008236);
+
+  static const bank = Color(0xFF90A1B9);
+  static const bankBg = Color(0xFFF1F5F9);
+  static const bankAmount = Color(0xFF45556C);
+
+  static const sectionBg = Color(0xFFFFF2D9);
+}
+
