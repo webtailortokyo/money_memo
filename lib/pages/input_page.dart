@@ -1,3 +1,5 @@
+// lib/pages/input_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -5,6 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../models/money_type.dart';
 import '../models/money_entry.dart';
 import '../theme.dart';
+import '../constants.dart'; // <-- 定数ファイルをインポートします
 
 class InputPage extends StatefulWidget {
   final MoneyEntry? entry; // nullなら新規、あれば編集
@@ -46,8 +49,9 @@ class _InputPageState extends State<InputPage> {
     final picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
+      // 定数を利用
+      firstDate: DateTime(AppNumbers.minInputDatePickerYear),
+      lastDate: DateTime(AppNumbers.maxDatePickerYear), // period_pageと同じ定数を利用
     );
 
     if (picked != null) {
@@ -65,9 +69,9 @@ class _InputPageState extends State<InputPage> {
       if (memoController.text.isNotEmpty) return;
 
       if (type == MoneyType.bankIn) {
-        memoController.text = '銀行に預けた';
+        memoController.text = AppStrings.initialMemoBankIn; // 定数を利用
       } else if (type == MoneyType.bankOut) {
-        memoController.text = '銀行から出した';
+        memoController.text = AppStrings.initialMemoBankOut; // 定数を利用
       } else {
         memoController.clear();
       }
@@ -78,7 +82,7 @@ class _InputPageState extends State<InputPage> {
     widget.entry!.delete();
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('削除しました')),
+      const SnackBar(content: Text(AppStrings.deleteSuccessMessage)), // 定数を利用
     );
 
     Navigator.pop(context);
@@ -90,7 +94,7 @@ class _InputPageState extends State<InputPage> {
 
     if (memo.isEmpty || amountText.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('項目と金額を入力してください')),
+        const SnackBar(content: Text(AppStrings.inputErrorSnackbarMessage)), // 定数を利用
       );
       return;
     }
@@ -98,7 +102,7 @@ class _InputPageState extends State<InputPage> {
     final amount = int.tryParse(amountText);
     if (amount == null) return;
 
-    final box = Hive.box<MoneyEntry>('moneyBox');
+    final box = Hive.box<MoneyEntry>(HiveConstants.moneyBoxName); // 定数を利用
 
     final newEntry = MoneyEntry(
       amount: amount,
@@ -119,24 +123,24 @@ class _InputPageState extends State<InputPage> {
   String get memoLabel {
     switch (selectedType) {
       case MoneyType.decrease:
-        return '何に？';
+        return AppStrings.memoLabelDecrease; // 定数を利用
       case MoneyType.increase:
-        return '何で？';
+        return AppStrings.memoLabelIncrease; // 定数を利用
       case MoneyType.bankIn:
       case MoneyType.bankOut:
-        return 'メモ';
+        return AppStrings.memoLabelBank; // 定数を利用
     }
   }
 
   String get memoHint {
     switch (selectedType) {
       case MoneyType.decrease:
-        return '例：アイス、ゲーム';
+        return AppStrings.memoHintDecrease; // 定数を利用
       case MoneyType.increase:
-        return '例：お小遣い、プレゼント';
+        return AppStrings.memoHintIncrease; // 定数を利用
       case MoneyType.bankIn:
       case MoneyType.bankOut:
-        return '例：〇〇銀行';
+        return AppStrings.memoHintBank; // 定数を利用
     }
   }
 
@@ -146,9 +150,9 @@ class _InputPageState extends State<InputPage> {
     return Expanded(
       child: InkWell(
         onTap: () => _onTypeChanged(type),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(AppNumbers.typeButtonBorderRadius), // 定数を利用
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          padding: const EdgeInsets.symmetric(vertical: AppNumbers.mediumSpacing, horizontal: AppNumbers.defaultPadding), // 定数を利用
           decoration: BoxDecoration(
             color: selected
                 ? color
@@ -156,8 +160,8 @@ class _InputPageState extends State<InputPage> {
                     ? AppColors.decreaseBg
                     : type == MoneyType.increase
                         ? AppColors.increaseBg
-                        : AppColors.bankBg, // ここを変更
-            borderRadius: BorderRadius.circular(24),
+                        : AppColors.bankBg,
+            borderRadius: BorderRadius.circular(AppNumbers.typeButtonBorderRadius), // 定数を利用
           ),
           child: Align(
             alignment: Alignment.centerLeft,
@@ -179,15 +183,15 @@ class _InputPageState extends State<InputPage> {
     final dateText =
         '${selectedDate.year}/${selectedDate.month}/${selectedDate.day}';
 
-    return Scaffold( // Material から Scaffold に変更
+    return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar( // このAppBarは前回の修正で追加されているはずです
+      appBar: AppBar(
         backgroundColor: AppColors.background,
-        elevation: 0,
+        elevation: AppNumbers.appBarElevation, // 定数を利用
         title: Text(
-          isEdit ? '記録を編集する' : '新しく記録する',
+          isEdit ? AppStrings.editRecordTitle : AppStrings.newRecordTitle, // 定数を利用
           style: const TextStyle(
-            fontSize: 24,
+            fontSize: AppNumbers.appBarTitleFontSizeInput, // 定数を利用
             fontWeight: FontWeight.bold,
             color: AppColors.pink,
           ),
@@ -197,69 +201,65 @@ class _InputPageState extends State<InputPage> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: SafeArea( // 必要に応じてSafeAreaを追加すると、ノッチなどからの余白を自動で調整してくれます
-        child: SingleChildScrollView( // キーボードが表示された際に内容が隠れないように
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20), // 画面端からの余白
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: AppNumbers.defaultPadding + AppNumbers.smallSpacing, vertical: AppNumbers.defaultPadding + AppNumbers.smallSpacing), // 定数を利用 (20を表現)
           child: Column(
-            // mainAxisSize: MainAxisSize.min, // この行を削除するか、
-            // mainAxisSize: MainAxisSize.max, // こちらに変更してください。
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ... 既存のInkWell、Text、Row、TextField、OutlinedButton、ElevatedButtonなどのウィジェット ...
-
               InkWell(
                 onTap: _pickDate,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(vertical: AppNumbers.smallSpacing), // 定数を利用
                   child: Row(
                     children: [
-                      const Icon(Icons.calendar_today, size: 18),
-                      const SizedBox(width: 8),
+                      const Icon(Icons.calendar_today, size: AppNumbers.calendarIconSize), // 定数を利用
+                      const SizedBox(width: AppNumbers.smallSpacing), // 定数を利用
                       Text(dateText),
                     ],
                   ),
                 ),
               ),
 
-              const SizedBox(height: 8),
-              const Text('減った？ 増えた？ 銀行？'),
+              const SizedBox(height: AppNumbers.smallSpacing), // 定数を利用
+              const Text(AppStrings.typeSelectionTitle), // 定数を利用
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AppNumbers.defaultPadding), // 定数を利用
 
               Row(
                 children: [
-                  _typeButton('減った', MoneyType.decrease, AppColors.decrease),
-                  const SizedBox(width: 8),
-                  _typeButton('増えた', MoneyType.increase, AppColors.increase),
+                  _typeButton(AppStrings.decreaseTypeLabel, MoneyType.decrease, AppColors.decrease), // 定数を利用
+                  const SizedBox(width: AppNumbers.smallSpacing), // 定数を利用
+                  _typeButton(AppStrings.increaseTypeLabel, MoneyType.increase, AppColors.increase), // 定数を利用
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppNumbers.smallSpacing), // 定数を利用
               Row(
                 children: [
-                  _typeButton('銀行に預けた', MoneyType.bankIn, AppColors.bank),
-                  const SizedBox(width: 8),
-                  _typeButton('銀行から出した', MoneyType.bankOut, AppColors.bank),
+                  _typeButton(AppStrings.bankInTypeLabel, MoneyType.bankIn, AppColors.bank), // 定数を利用
+                  const SizedBox(width: AppNumbers.smallSpacing), // 定数を利用
+                  _typeButton(AppStrings.bankOutTypeLabel, MoneyType.bankOut, AppColors.bank), // 定数を利用
                 ],
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: AppNumbers.defaultPadding + AppNumbers.smallSpacing), // 定数を利用 (20を表現)
 
               Text(memoLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 6),
+              const SizedBox(height: AppNumbers.smallSpacing + 0), // 定数を利用 (6を表現)
               TextField(
                 controller: memoController,
                 decoration: InputDecoration(
                   hintText: memoHint,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(AppNumbers.defaultPadding), // 定数を利用
                   ),
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: AppNumbers.defaultPadding), // 定数を利用
 
-              const Text('いくら？', style: TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 6),
+              const Text(AppStrings.amountLabel, style: TextStyle(fontWeight: FontWeight.bold)), // 定数を利用
+              const SizedBox(height: AppNumbers.smallSpacing + 0), // 定数を利用 (6を表現)
               TextField(
                 controller: amountController,
                 keyboardType: TextInputType.number,
@@ -267,40 +267,40 @@ class _InputPageState extends State<InputPage> {
                   FilteringTextInputFormatter.digitsOnly,
                 ],
                 decoration: const InputDecoration(
-                  hintText: '0',
+                  hintText: AppStrings.amountHint, // 定数を利用
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: AppNumbers.defaultPadding + AppNumbers.smallSpacing), // 定数を利用 (20を表現)
 
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('キャンセル'),
+                      child: const Text(AppStrings.cancelButtonText), // 定数を利用
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AppNumbers.mediumSpacing), // 定数を利用
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _save,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.pink,
                       ),
-                      child: Text(isEdit ? '更新する' : '記録する'),
+                      child: Text(isEdit ? AppStrings.updateButtonText : AppStrings.recordButtonText), // 定数を利用
                     ),
                   ),
                 ],
               ),
 
               if (isEdit) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: AppNumbers.mediumSpacing), // 定数を利用
                 Center(
                   child: TextButton.icon(
                     icon: const Icon(Icons.delete, color: Colors.red),
                     label: const Text(
-                      '削除する',
+                      AppStrings.deleteButtonTextInput, // 定数を利用
                       style: TextStyle(color: Colors.red),
                     ),
                     onPressed: _delete,

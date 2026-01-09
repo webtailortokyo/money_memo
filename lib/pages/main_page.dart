@@ -1,3 +1,5 @@
+// lib/pages/main_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -7,6 +9,7 @@ import '../theme.dart';
 import '../models/money_entry.dart';
 import '../widgets/money_entry_card.dart';
 import '../utils/sort_entries.dart';
+import '../constants.dart'; // <-- 定数ファイルをインポートします
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -21,7 +24,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    box = Hive.box<MoneyEntry>('moneyBox');
+    box = Hive.box<MoneyEntry>(HiveConstants.moneyBoxName); // 定数を利用
   }
 
   @override
@@ -31,13 +34,13 @@ class _MainPageState extends State<MainPage> {
 
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        elevation: 0,
+        elevation: AppNumbers.appBarElevation, // 定数を利用
         title: const Text(
-          'おかねメモ',
+          AppStrings.appTitle, // 定数を利用
           style: TextStyle(
             color: AppColors.pink,
             fontWeight: FontWeight.bold,
-            fontSize: 28,
+            fontSize: AppNumbers.titleFontSize, // 定数を利用
           ),
         ),
         actions: [
@@ -61,14 +64,18 @@ class _MainPageState extends State<MainPage> {
         builder: (context, Box<MoneyEntry> box, _) {
           if (box.isEmpty) {
             return const Center(
-              child: Text('まだ記録がありません'),
+              child: Text(AppStrings.noRecordMessage), // 定数を利用
             );
           }
 
           final entries = sortedEntries(box);
 
           return ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            // 定数を利用
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppNumbers.listViewHorizontalPadding,
+              vertical: AppNumbers.listViewVerticalPadding,
+            ),
             itemCount: entries.length,
             itemBuilder: (context, index) {
               final entry = entries[index];
@@ -91,17 +98,17 @@ class _MainPageState extends State<MainPage> {
                   final result = await showDialog<bool>(
                     context: context,
                     builder: (_) => AlertDialog(
-                      title: const Text('削除しますか？'),
-                      content: const Text('この記録を削除します。'),
+                      title: const Text(AppStrings.deleteDialogTitle), // 定数を利用
+                      content: const Text(AppStrings.deleteDialogContent), // 定数を利用
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context, false),
-                          child: const Text('キャンセル'),
+                          child: const Text(AppStrings.cancelButtonText), // 定数を利用
                         ),
                         TextButton(
                           onPressed: () => Navigator.pop(context, true),
                           child: const Text(
-                            '削除',
+                            AppStrings.deleteButtonText, // 定数を利用
                             style: TextStyle(color: Colors.red),
                           ),
                         ),
