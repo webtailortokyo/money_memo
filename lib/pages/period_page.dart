@@ -13,7 +13,7 @@ import '../widgets/period_date_selector.dart';
 import '../widgets/total_amount_row.dart';
 import '../utils/format_utils.dart';
 import '../utils/sort_entries.dart';
-import '../constants.dart'; // <-- 定数ファイルをインポートします
+import '../constants.dart';
 
 class PeriodPage extends StatefulWidget {
   const PeriodPage({super.key});
@@ -25,14 +25,13 @@ class PeriodPage extends StatefulWidget {
 class _PeriodPageState extends State<PeriodPage> {
   late Box<MoneyEntry> box;
 
-  // 定数を利用
   DateTime fromDate = DateTime.now().subtract(const Duration(days: AppNumbers.initialPeriodDays));
   DateTime toDate = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    box = Hive.box<MoneyEntry>(HiveConstants.moneyBoxName); // 定数を利用
+    box = Hive.box<MoneyEntry>(HiveConstants.moneyBoxName);
   }
 
 
@@ -43,7 +42,7 @@ class _PeriodPageState extends State<PeriodPage> {
     final picked = await showDatePicker(
       context: context,
       initialDate: initial,
-      // 定数を利用
+     
       firstDate: DateTime(AppNumbers.minDatePickerYear),
       lastDate: DateTime(AppNumbers.maxDatePickerYear),
     );
@@ -60,13 +59,17 @@ class _PeriodPageState extends State<PeriodPage> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        elevation: AppNumbers.appBarElevation, // 定数を利用
+        elevation: AppNumbers.appBarElevation,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.pink),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const Text(
-          AppStrings.periodPageTitle, // 定数を利用
+          AppStrings.periodPageTitle,
           style: TextStyle(
             color: AppColors.pink,
             fontWeight: FontWeight.bold,
-            fontSize: AppNumbers.titleFontSize, // 定数を利用
+            fontSize: AppNumbers.subPageTitleFontSize,
           ),
         ),
         iconTheme: const IconThemeData(color: AppColors.pink),
@@ -75,7 +78,7 @@ class _PeriodPageState extends State<PeriodPage> {
         valueListenable: box.listenable(),
         builder: (context, Box<MoneyEntry> box, _) {
           if (box.isEmpty) {
-            return const Center(child: Text(AppStrings.noRecordMessage)); // 定数を利用
+            return const Center(child: Text(AppStrings.noRecordMessage));
           }
 
           final entries = sortedEntries(box);
@@ -91,16 +94,16 @@ class _PeriodPageState extends State<PeriodPage> {
 
           for (final e in filtered) {
             switch (e.type) {
-              case MoneyEntryTypes.increase: // 定数を利用
+              case MoneyEntryTypes.increase:
                 increase += e.amount;
                 break;
-              case MoneyEntryTypes.decrease: // 定数を利用
+              case MoneyEntryTypes.decrease:
                 decrease += e.amount;
                 break;
-              case MoneyEntryTypes.bankIn: // 定数を利用
+              case MoneyEntryTypes.bankIn:
                 bank += e.amount;
                 break;
-              case MoneyEntryTypes.bankOut: // 定数を利用
+              case MoneyEntryTypes.bankOut:
                 bank -= e.amount;
                 break;
             }
@@ -110,7 +113,7 @@ class _PeriodPageState extends State<PeriodPage> {
               '${formatDate(fromDate)} 〜 ${formatDate(toDate)}';
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppNumbers.defaultPadding), // 定数を利用
+            padding: const EdgeInsets.symmetric(horizontal: AppNumbers.defaultPadding, vertical: 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -124,24 +127,24 @@ class _PeriodPageState extends State<PeriodPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(AppStrings.dateSectionTitle, // 定数を利用
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                      const SizedBox(height: AppNumbers.mediumSpacing), // 定数を利用
+                      const Text(AppStrings.dateSectionTitle,
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppNumbers.sectionTitleFontSize)),
+                      const SizedBox(height: AppNumbers.mediumSpacing),
 
                       /// 🔹 期間入力
                       PeriodDateSelector(
                         date: fromDate,
-                        label: AppStrings.fromLabel, // 定数を利用
+                        label: AppStrings.fromLabel,
                         onTap: () => _pickDate(
                           initial: fromDate,
                           onSelected: (d) => fromDate = d,
                         ),
                         formatDate: formatDate,
                       ),
-                      const SizedBox(height: AppNumbers.defaultPadding), // 定数を利用
+                      const SizedBox(height: AppNumbers.defaultPadding),
                       PeriodDateSelector(
                         date: toDate,
-                        label: AppStrings.toLabel, // 定数を利用
+                        label: AppStrings.toLabel,
                         onTap: () => _pickDate(
                           initial: toDate,
                           onSelected: (d) => toDate = d,
@@ -152,7 +155,7 @@ class _PeriodPageState extends State<PeriodPage> {
                   ),
                 ),
 
-                const SizedBox(height: AppNumbers.largeSpacing), // 定数を利用
+                const SizedBox(height: AppNumbers.largeSpacing),
                 /// 🔹 コピーするボタン
                 SizedBox(
                   width: double.infinity,
@@ -160,11 +163,11 @@ class _PeriodPageState extends State<PeriodPage> {
                     onPressed: () {
                       final text = StringBuffer()
                         ..writeln('${periodLabel} の記録\n')
-                        ..writeln(AppStrings.detailSectionTitle) // 定数を利用
-                        ..writeln(AppStrings.clipboardNote); // 定数を利用
+                        ..writeln(AppStrings.detailSectionTitle)
+                        ..writeln(AppStrings.clipboardNote);
 
                       // タブ区切りのヘッダ
-                      text.writeln(AppStrings.clipboardHeader); // 定数を利用
+                      text.writeln(AppStrings.clipboardHeader);
 
                       for (final e in filtered) {
                         // 日本語のtype名
@@ -172,20 +175,20 @@ class _PeriodPageState extends State<PeriodPage> {
                         int signedAmount;
 
                         switch (e.type) {
-                          case MoneyEntryTypes.increase: // 定数を利用
-                            typeLabel = AppStrings.increaseTypeLabel; // 定数を利用
+                          case MoneyEntryTypes.increase:
+                            typeLabel = AppStrings.increaseTypeLabel;
                             signedAmount = e.amount; // ＋
                             break;
-                          case MoneyEntryTypes.decrease: // 定数を利用
-                            typeLabel = AppStrings.decreaseTypeLabel; // 定数を利用
+                          case MoneyEntryTypes.decrease:
+                            typeLabel = AppStrings.decreaseTypeLabel;
                             signedAmount = -e.amount; // －
                             break;
-                          case MoneyEntryTypes.bankIn: // 定数を利用
-                            typeLabel = AppStrings.bankInTypeLabel; // 定数を利用
+                          case MoneyEntryTypes.bankIn:
+                            typeLabel = AppStrings.bankInTypeLabel;
                             signedAmount = e.amount; // ＋
                             break;
-                          case MoneyEntryTypes.bankOut: // 定数を利用
-                            typeLabel = AppStrings.bankOutTypeLabel; // 定数を利用
+                          case MoneyEntryTypes.bankOut:
+                            typeLabel = AppStrings.bankOutTypeLabel;
                             signedAmount = -e.amount; // －
                             break;
                           default:
@@ -235,7 +238,7 @@ class _PeriodPageState extends State<PeriodPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(AppStrings.totalSectionTitle, // 定数を利用
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppNumbers.sectionTitleFontSize)),
                       const SizedBox(height: AppNumbers.defaultPadding), // 定数を利用
                       TotalAmountRow(
                         label: AppStrings.increaseTypeLabel, // 定数を利用
@@ -267,7 +270,7 @@ class _PeriodPageState extends State<PeriodPage> {
 
                 /// 🔹 内訳
                 const Text(AppStrings.detailSectionTitle, // 定数を利用
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppNumbers.sectionTitleFontSize)),
                 const SizedBox(height: AppNumbers.smallSpacing), // 定数を利用
                 ...filtered.map((e) => MoneyEntryCard(entry: e)),
               ],

@@ -191,19 +191,19 @@ class _InputPageState extends State<InputPage> {
         title: Text(
           isEdit ? AppStrings.editRecordTitle : AppStrings.newRecordTitle, // 定数を利用
           style: const TextStyle(
-            fontSize: AppNumbers.appBarTitleFontSizeInput, // 定数を利用
+            fontSize: AppNumbers.subPageTitleFontSize, // 定数を利用
             fontWeight: FontWeight.bold,
             color: AppColors.pink,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.pink),
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.pink),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: AppNumbers.defaultPadding + AppNumbers.smallSpacing, vertical: AppNumbers.defaultPadding + AppNumbers.smallSpacing), // 定数を利用 (20を表現)
+          padding: const EdgeInsets.symmetric(horizontal: AppNumbers.defaultPadding + AppNumbers.smallSpacing, vertical: 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -222,7 +222,7 @@ class _InputPageState extends State<InputPage> {
               ),
 
               const SizedBox(height: AppNumbers.smallSpacing), // 定数を利用
-              const Text(AppStrings.typeSelectionTitle), // 定数を利用
+              const Text(AppStrings.typeSelectionTitle, style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppNumbers.sectionTitleFontSize)), // 定数を利用
 
               const SizedBox(height: AppNumbers.defaultPadding), // 定数を利用
 
@@ -242,24 +242,24 @@ class _InputPageState extends State<InputPage> {
                 ],
               ),
 
-              const SizedBox(height: AppNumbers.defaultPadding + AppNumbers.smallSpacing), // 定数を利用 (20を表現)
+              const SizedBox(height: AppNumbers.defaultPadding + AppNumbers.smallSpacing),
 
-              Text(memoLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: AppNumbers.smallSpacing + 0), // 定数を利用 (6を表現)
+              Text(memoLabel, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: AppNumbers.sectionTitleFontSize)),
+              const SizedBox(height: AppNumbers.smallSpacing + 0),
               TextField(
                 controller: memoController,
                 decoration: InputDecoration(
                   hintText: memoHint,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppNumbers.defaultPadding), // 定数を利用
+                    borderRadius: BorderRadius.circular(AppNumbers.defaultPadding),
                   ),
                 ),
               ),
 
-              const SizedBox(height: AppNumbers.defaultPadding), // 定数を利用
+              const SizedBox(height: AppNumbers.defaultPadding),
 
-              const Text(AppStrings.amountLabel, style: TextStyle(fontWeight: FontWeight.bold)), // 定数を利用
-              const SizedBox(height: AppNumbers.smallSpacing + 0), // 定数を利用 (6を表現)
+              const Text(AppStrings.amountLabel, style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppNumbers.sectionTitleFontSize)),
+              const SizedBox(height: AppNumbers.smallSpacing + 0),
               TextField(
                 controller: amountController,
                 keyboardType: TextInputType.number,
@@ -267,11 +267,11 @@ class _InputPageState extends State<InputPage> {
                   FilteringTextInputFormatter.digitsOnly,
                 ],
                 decoration: const InputDecoration(
-                  hintText: AppStrings.amountHint, // 定数を利用
+                  hintText: AppStrings.amountHint,
                 ),
               ),
 
-              const SizedBox(height: AppNumbers.defaultPadding + AppNumbers.smallSpacing), // 定数を利用 (20を表現)
+              const SizedBox(height: AppNumbers.defaultPadding + AppNumbers.smallSpacing),
 
               Row(
                 children: [

@@ -2,25 +2,9 @@ import 'package:flutter/material.dart';
 
 // アプリ全体で使う共通の文字列
 class AppStrings {
-  static const String appTitle = 'おかねメモ';
-  static const String periodPageTitle = '期間で見る';
-  static const String noRecordMessage = 'まだ記録がありません';
-  static const String dateSectionTitle = '■ 日付';
-  static const String fromLabel = 'から';
-  static const String toLabel = 'まで';
-  static const String copyButtonText = 'この期間の記録をコピー';
-  static const String copySuccessMessage = 'コピーしました！';
-  static const String totalSectionTitle = '■ 合計';
-  static const String detailSectionTitle = '■ 内訳';
-  static const String increaseTypeLabel = '増えた';
-  static const String decreaseTypeLabel = '減った';
-  static const String bankInTypeLabel = '銀行入金';
-  static const String bankOutTypeLabel = '銀行出金';
-  static const String bankBalanceLabel = '銀行残高';
-  static const String clipboardHeader = '日付\t内容\t種別\t金額';
-  static const String clipboardNote = '※銀行については「銀行に預けた」を＋、「銀行から出した」を－として扱っています（手元のお金ではなく銀行残高基準）\n';
-
   // main_page.dart
+  static const String appTitle = 'おかねメモ';
+  static const String noRecordMessage = 'まだ記録がありません';
   static const String deleteDialogTitle = '削除しますか？';
   static const String deleteDialogContent = 'この記録を削除します。';
   static const String cancelButtonText = 'キャンセル';
@@ -47,15 +31,32 @@ class AppStrings {
   // input_page.dart のメモの初期値
   static const String initialMemoBankIn = '銀行に預けた';
   static const String initialMemoBankOut = '銀行から出した';
+
+  // period_page.dart
+  static const String periodPageTitle = '期間で見る';
+  static const String dateSectionTitle = '■ 日付';
+  static const String fromLabel = 'から';
+  static const String toLabel = 'まで';
+  static const String copyButtonText = 'この期間の記録をコピー';
+  static const String copySuccessMessage = 'コピーしました！';
+  static const String totalSectionTitle = '■ 合計';
+  static const String detailSectionTitle = '■ 内訳';
+  static const String increaseTypeLabel = '増えた';
+  static const String decreaseTypeLabel = '減った';
+  static const String bankInTypeLabel = '銀行入金';
+  static const String bankOutTypeLabel = '銀行出金';
+  static const String bankBalanceLabel = '銀行残高';
+  static const String clipboardHeader = '日付\t内容\t種別\t金額';
+  static const String clipboardNote = '※銀行については「銀行に預けた」を＋、「銀行から出した」を－として扱っています（手元のお金ではなく銀行残高基準）\n';
+
 }
 
 // アプリ全体で使う共通の数値
 class AppNumbers {
-  static const int initialPeriodDays = 30;
-  static const int minDatePickerYear = 2000;
-  static const int maxDatePickerYear = 2100;
+  static const double titleFontSize = 18.0;
+  static const double subPageTitleFontSize = 24.0;
+  static const double sectionTitleFontSize = 18.0;
   static const double appBarElevation = 0.0;
-  static const double titleFontSize = 28.0;
   static const double defaultPadding = 16.0;
   static const double mediumSpacing = 12.0;
   static const double smallSpacing = 8.0;
@@ -70,7 +71,11 @@ class AppNumbers {
   static const int minInputDatePickerYear = 2020; // input_pageの日付選択の最小年
   static const double typeButtonBorderRadius = 24.0;
   static const double calendarIconSize = 18.0;
-  static const double appBarTitleFontSizeInput = 24.0; // input_pageのAppBarタイトルの文字サイズ
+
+  // period_page.dart
+  static const int initialPeriodDays = 30;
+  static const int minDatePickerYear = 2000;
+  static const int maxDatePickerYear = 2100;
 }
 
 // HiveのBox名
