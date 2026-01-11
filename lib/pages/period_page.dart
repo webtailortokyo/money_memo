@@ -165,7 +165,12 @@ class _PeriodPageState extends State<PeriodPage> {
                       final text = StringBuffer()
                         ..writeln('${periodLabel} の記録\n');
 
-
+                       // 🔹 合計
+                      text.writeln(AppStrings.totalSectionTitle);
+                      text.writeln('${AppStrings.increaseTypeLabel}\t$increase');
+                      text.writeln('${AppStrings.decreaseTypeLabel}\t$decrease');
+                      text.writeln('${AppStrings.bankBalanceLabel}\t$bank');
+                      text.writeln(''); // 空行
 
 
                       // 🔹 内訳
