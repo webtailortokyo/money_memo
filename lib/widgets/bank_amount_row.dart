@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme.dart';
 
 class BankAmountRow extends StatelessWidget {
   final Widget amountText;
@@ -17,7 +18,7 @@ class BankAmountRow extends StatelessWidget {
         const Icon(
           Icons.account_balance,
           size: 16,
-          color: Colors.black54,
+          color: AppColors.mainText,
         ),
         const SizedBox(width: 6),
         amountText,

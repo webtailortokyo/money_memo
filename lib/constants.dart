@@ -47,15 +47,16 @@ class AppStrings {
   static const String bankOutTypeLabel = '銀行出金';
   static const String bankBalanceLabel = '銀行残高';
   static const String clipboardHeader = '日付\t内容\t種別\t金額';
-  static const String clipboardNote = '※銀行については「銀行に預けた」を＋、「銀行から出した」を－として扱っています（手元のお金ではなく銀行残高基準）\n';
+  static const String clipboardNote = '※銀行については「銀行に預けた」を＋、「銀行から出した」を－として扱っています（手元のお金ではなく銀行残高基準）\n※タブ区切りテキスト形式のため、Excel等の表計算ソフトへの貼り付けが可能です\n';
 
 }
 
 // アプリ全体で使う共通の数値
 class AppNumbers {
-  static const double titleFontSize = 18.0;
+  static const double titleFontSize = 24.0;
   static const double subPageTitleFontSize = 24.0;
   static const double sectionTitleFontSize = 18.0;
+  static const double amountTextFontSize = 24.0;
   static const double appBarElevation = 0.0;
   static const double defaultPadding = 16.0;
   static const double mediumSpacing = 12.0;
@@ -70,12 +71,17 @@ class AppNumbers {
   // input_page.dart
   static const int minInputDatePickerYear = 2020; // input_pageの日付選択の最小年
   static const double typeButtonBorderRadius = 24.0;
-  static const double calendarIconSize = 18.0;
+  static const double calendarIconSize = 20.0;
+  static const double calendarFontSize = 18.0;
+  
 
   // period_page.dart
   static const int initialPeriodDays = 30;
   static const int minDatePickerYear = 2000;
   static const int maxDatePickerYear = 2100;
+
+  // 合計ラベル・金額のサイズ
+  static const double totalAmountSize = 32.0;
 }
 
 // HiveのBox名

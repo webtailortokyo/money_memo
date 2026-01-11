@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../constants.dart';
 
 class MoneyAmountText extends StatelessWidget {
   final String text;
@@ -12,8 +13,8 @@ class MoneyAmountText extends StatelessWidget {
     required this.text,
     required this.color,
     this.showSign = true,
-    this.numberSize = 18,
-    this.signSize = 20,
+    this.numberSize = AppNumbers.amountTextFontSize,
+    this.signSize = AppNumbers.amountTextFontSize + 2,
   });
 
   @override

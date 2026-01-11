@@ -77,7 +77,7 @@ class MoneyEntryCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 6),
         child: Stack(
           children: [
-            /// ↓ Manus風の柔らかいシャドウ & 左のアクセント影
+            /// 柔らかいシャドウ & 左のアクセント影
             Container(
               decoration: BoxDecoration(
                 color: bgColor,
@@ -87,7 +87,7 @@ class MoneyEntryCard extends StatelessWidget {
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
                     spreadRadius: 1,
-                    blurRadius: 6,
+                    blurRadius: 4,
                     offset: const Offset(1, 2),
                   ),
 
@@ -114,8 +114,9 @@ class MoneyEntryCard extends StatelessWidget {
                             Text(
                               entry.memo,
                               style: const TextStyle(
-                                fontSize: 16,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                color: AppColors.mainText,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -123,7 +124,7 @@ class MoneyEntryCard extends StatelessWidget {
                               dateLabel(entry.date),
                               style: const TextStyle(
                                 fontSize: 12,
-                                color: Colors.black54,
+                                color: AppColors.mainText,
                               ),
                             ),
                           ],

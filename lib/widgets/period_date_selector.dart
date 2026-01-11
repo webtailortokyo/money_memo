@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../theme.dart';
+import '../constants.dart';
 
 class PeriodDateSelector extends StatelessWidget {
     const PeriodDateSelector({
@@ -6,13 +8,13 @@ class PeriodDateSelector extends StatelessWidget {
     required this.date,
     required this.label,
     required this.onTap,
-    required this.formatDate, // formatDate 関数を引数として受け取る
+    required this.formatDate,
     });
 
     final DateTime date;
     final String label;
     final VoidCallback onTap;
-    final String Function(DateTime) formatDate; // 関数の型定義
+    final String Function(DateTime) formatDate;
 
     @override
     Widget build(BuildContext context) {
@@ -25,18 +27,21 @@ class PeriodDateSelector extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
             decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppNumbers.cardBorderRadius),
             ),
             child: Row(
                 children: [
-                Text(formatDate(date)), // 引数で受け取ったformatDateを使う
+                Text(formatDate(date)),
                 const Spacer(),
                 const Icon(Icons.calendar_today, size: 18),
                 ],
             ),
             ),
         ),
-        Text(label, style: const TextStyle(color: Colors.grey)),
+        Padding(
+            padding: const EdgeInsets.only(top: 8.0, left: 10.0), // 数値はお好みで調整してください
+            child: Text(label, style: const TextStyle(color: AppColors.mainText)),
+        ),
         const SizedBox(height: 6),
         ],
     );

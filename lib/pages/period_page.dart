@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:vibration/vibration.dart';
 
 import '../models/money_entry.dart';
 import '../theme.dart';
@@ -119,10 +120,10 @@ class _PeriodPageState extends State<PeriodPage> {
               children: [
                 /// 🔹 期間
                 Container(
-                  padding: const EdgeInsets.all(AppNumbers.defaultPadding), // 定数を利用
+                  padding: const EdgeInsets.all(AppNumbers.defaultPadding),
                   decoration: BoxDecoration(
                     color: AppColors.sectionBg,
-                    borderRadius: BorderRadius.circular(AppNumbers.defaultPadding), // 定数を利用
+                    borderRadius: BorderRadius.circular(AppNumbers.defaultPadding),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,11 +161,15 @@ class _PeriodPageState extends State<PeriodPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       final text = StringBuffer()
-                        ..writeln('${periodLabel} の記録\n')
-                        ..writeln(AppStrings.detailSectionTitle)
-                        ..writeln(AppStrings.clipboardNote);
+                        ..writeln('${periodLabel} の記録\n');
+
+
+
+
+                      // 🔹 内訳
+                      text.writeln(AppStrings.detailSectionTitle);
 
                       // タブ区切りのヘッダ
                       text.writeln(AppStrings.clipboardHeader);
@@ -206,72 +211,76 @@ class _PeriodPageState extends State<PeriodPage> {
                           '$amountStr'
                         );
                       }
+                      text.writeln('\n${AppStrings.clipboardNote}');
 
                       Clipboard.setData(ClipboardData(text: text.toString()));
 
+                      if (await Vibration.hasVibrator() ?? false) {
+                        Vibration.vibrate(duration: 200, amplitude: 128);
+                      }
+
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text(AppStrings.copySuccessMessage)), // 定数を利用
+                        const SnackBar(content: Text(AppStrings.copySuccessMessage)),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.pink,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: AppNumbers.mediumSpacing), // 定数を利用
+                      padding: const EdgeInsets.symmetric(vertical: AppNumbers.mediumSpacing),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppNumbers.cardBorderRadius), // 定数を利用
+                        borderRadius: BorderRadius.circular(AppNumbers.cardBorderRadius),
                       ),
                     ),
-                    child: const Text(AppStrings.copyButtonText), // 定数を利用
+                    child: const Text(AppStrings.copyButtonText),
                   ),
                 ),
 
-                const SizedBox(height: AppNumbers.defaultPadding + AppNumbers.smallSpacing), // 定数を利用 (20を表現)
+                const SizedBox(height: AppNumbers.defaultPadding + AppNumbers.smallSpacing),
                 
                 /// 🔹 合計
                 Container(
-                  padding: const EdgeInsets.all(AppNumbers.defaultPadding), // 定数を利用
+                  padding: const EdgeInsets.all(AppNumbers.defaultPadding),
                   decoration: BoxDecoration(
                     color: AppColors.sectionBg,
-                    borderRadius: BorderRadius.circular(AppNumbers.cardBorderRadius), // 定数を利用
+                    borderRadius: BorderRadius.circular(AppNumbers.cardBorderRadius),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(AppStrings.totalSectionTitle, // 定数を利用
+                      const Text(AppStrings.totalSectionTitle,
                           style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppNumbers.sectionTitleFontSize)),
-                      const SizedBox(height: AppNumbers.defaultPadding), // 定数を利用
+                      const SizedBox(height: AppNumbers.defaultPadding),
                       TotalAmountRow(
-                        label: AppStrings.increaseTypeLabel, // 定数を利用
+                        label: AppStrings.increaseTypeLabel,
                         value: increase,
                         color: AppColors.increaseAmount,
                         formatAmount: formatAmount,
                       ),
-                      const SizedBox(height: AppNumbers.smallSpacing), // 定数を利用
+                      const SizedBox(height: AppNumbers.smallSpacing),
                       TotalAmountRow(
-                        label: AppStrings.decreaseTypeLabel, // 定数を利用
+                        label: AppStrings.decreaseTypeLabel,
                         value: decrease,
                         color: AppColors.decreaseAmount,
                         formatAmount: formatAmount,
                       ),
-                      const SizedBox(height: AppNumbers.smallSpacing), // 定数を利用
+                      const SizedBox(height: AppNumbers.smallSpacing),
                       TotalAmountRow(
-                        label: AppStrings.bankBalanceLabel, // 定数を利用
+                        label: AppStrings.bankBalanceLabel,
                         value: bank,
                         color: AppColors.bankAmount,
                         isBank: true,
                         formatAmount: formatAmount,
                       ),
-
                     ],
                   ),
                 ),
 
-                const SizedBox(height: AppNumbers.defaultPadding + AppNumbers.smallSpacing), // 定数を利用 (20を表現)
+                const SizedBox(height: AppNumbers.defaultPadding + AppNumbers.smallSpacing),
 
                 /// 🔹 内訳
-                const Text(AppStrings.detailSectionTitle, // 定数を利用
+                const Text(AppStrings.detailSectionTitle,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppNumbers.sectionTitleFontSize)),
-                const SizedBox(height: AppNumbers.smallSpacing), // 定数を利用
+                const SizedBox(height: AppNumbers.smallSpacing),
                 ...filtered.map((e) => MoneyEntryCard(entry: e)),
               ],
             ),

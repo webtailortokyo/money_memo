@@ -3,11 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:intl/intl.dart';
+import 'dart:developer';
+import 'package:vibration/vibration.dart';
 
 import '../models/money_type.dart';
 import '../models/money_entry.dart';
 import '../theme.dart';
-import '../constants.dart'; // <-- 定数ファイルをインポートします
+import '../constants.dart';
+import '../utils/input_formatter.dart';
 
 class InputPage extends StatefulWidget {
   final MoneyEntry? entry; // nullなら新規、あれば編集
@@ -49,9 +53,8 @@ class _InputPageState extends State<InputPage> {
     final picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
-      // 定数を利用
       firstDate: DateTime(AppNumbers.minInputDatePickerYear),
-      lastDate: DateTime(AppNumbers.maxDatePickerYear), // period_pageと同じ定数を利用
+      lastDate: DateTime(AppNumbers.maxDatePickerYear),
     );
 
     if (picked != null) {
@@ -65,44 +68,50 @@ class _InputPageState extends State<InputPage> {
     setState(() {
       selectedType = type;
 
+      // 編集モードのときはメモ自動変更しない
       if (isEdit) return;
-      if (memoController.text.isNotEmpty) return;
 
+      // タイプごとにメモを自動更新
       if (type == MoneyType.bankIn) {
-        memoController.text = AppStrings.initialMemoBankIn; // 定数を利用
+        memoController.text = AppStrings.initialMemoBankIn;
       } else if (type == MoneyType.bankOut) {
-        memoController.text = AppStrings.initialMemoBankOut; // 定数を利用
+        memoController.text = AppStrings.initialMemoBankOut;
       } else {
+        // 「減った」「増えた」はメモを空にする
         memoController.clear();
       }
     });
   }
 
+
   void _delete() {
     widget.entry!.delete();
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text(AppStrings.deleteSuccessMessage)), // 定数を利用
+      const SnackBar(content: Text(AppStrings.deleteSuccessMessage)),
     );
 
     Navigator.pop(context);
   }
 
-  void _save() {
+  Future<void> _save() async {
     final memo = memoController.text.trim();
     final amountText = amountController.text.trim();
 
+    // カンマをすべて削除
+    final cleanedAmount = amountText.replaceAll(',', '');
+
     if (memo.isEmpty || amountText.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.inputErrorSnackbarMessage)), // 定数を利用
+        const SnackBar(content: Text(AppStrings.inputErrorSnackbarMessage)),
       );
       return;
     }
 
-    final amount = int.tryParse(amountText);
+    final amount = int.tryParse(cleanedAmount);
     if (amount == null) return;
 
-    final box = Hive.box<MoneyEntry>(HiveConstants.moneyBoxName); // 定数を利用
+    final box = Hive.box<MoneyEntry>(HiveConstants.moneyBoxName);
 
     final newEntry = MoneyEntry(
       amount: amount,
@@ -117,30 +126,34 @@ class _InputPageState extends State<InputPage> {
       box.add(newEntry);
     }
 
+    if (await Vibration.hasVibrator() ?? false) {
+      Vibration.vibrate(duration: 1000, amplitude: 128);
+    }
+
     Navigator.pop(context);
   }
 
   String get memoLabel {
     switch (selectedType) {
       case MoneyType.decrease:
-        return AppStrings.memoLabelDecrease; // 定数を利用
+        return AppStrings.memoLabelDecrease;
       case MoneyType.increase:
-        return AppStrings.memoLabelIncrease; // 定数を利用
+        return AppStrings.memoLabelIncrease;
       case MoneyType.bankIn:
       case MoneyType.bankOut:
-        return AppStrings.memoLabelBank; // 定数を利用
+        return AppStrings.memoLabelBank;
     }
   }
 
   String get memoHint {
     switch (selectedType) {
       case MoneyType.decrease:
-        return AppStrings.memoHintDecrease; // 定数を利用
+        return AppStrings.memoHintDecrease;
       case MoneyType.increase:
-        return AppStrings.memoHintIncrease; // 定数を利用
+        return AppStrings.memoHintIncrease;
       case MoneyType.bankIn:
       case MoneyType.bankOut:
-        return AppStrings.memoHintBank; // 定数を利用
+        return AppStrings.memoHintBank;
     }
   }
 
@@ -150,9 +163,9 @@ class _InputPageState extends State<InputPage> {
     return Expanded(
       child: InkWell(
         onTap: () => _onTypeChanged(type),
-        borderRadius: BorderRadius.circular(AppNumbers.typeButtonBorderRadius), // 定数を利用
+        borderRadius: BorderRadius.circular(AppNumbers.typeButtonBorderRadius),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: AppNumbers.mediumSpacing, horizontal: AppNumbers.defaultPadding), // 定数を利用
+          padding: const EdgeInsets.symmetric(vertical: AppNumbers.mediumSpacing, horizontal: AppNumbers.defaultPadding),
           decoration: BoxDecoration(
             color: selected
                 ? color
@@ -161,7 +174,7 @@ class _InputPageState extends State<InputPage> {
                     : type == MoneyType.increase
                         ? AppColors.increaseBg
                         : AppColors.bankBg,
-            borderRadius: BorderRadius.circular(AppNumbers.typeButtonBorderRadius), // 定数を利用
+            borderRadius: BorderRadius.circular(AppNumbers.typeButtonBorderRadius),
           ),
           child: Align(
             alignment: Alignment.centerLeft,
@@ -169,7 +182,7 @@ class _InputPageState extends State<InputPage> {
               label,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: selected ? Colors.white : Colors.black54,
+                color: selected ? Colors.white : AppColors.mainText,
               ),
             ),
           ),
@@ -187,11 +200,11 @@ class _InputPageState extends State<InputPage> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
-        elevation: AppNumbers.appBarElevation, // 定数を利用
+        elevation: AppNumbers.appBarElevation,
         title: Text(
-          isEdit ? AppStrings.editRecordTitle : AppStrings.newRecordTitle, // 定数を利用
+          isEdit ? AppStrings.editRecordTitle : AppStrings.newRecordTitle,
           style: const TextStyle(
-            fontSize: AppNumbers.subPageTitleFontSize, // 定数を利用
+            fontSize: AppNumbers.subPageTitleFontSize,
             fontWeight: FontWeight.bold,
             color: AppColors.pink,
           ),
@@ -209,36 +222,54 @@ class _InputPageState extends State<InputPage> {
             children: [
               InkWell(
                 onTap: _pickDate,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: AppNumbers.smallSpacing), // 定数を利用
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AppNumbers.smallSpacing,
+                    horizontal: AppNumbers.defaultPadding,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white, // 背景色を白に
+                    borderRadius: BorderRadius.circular(AppNumbers.cardBorderRadius),
+                    // border: Border.all(color: Colors.grey.shade300), // 必要なら薄い枠線
+                  ),
                   child: Row(
                     children: [
-                      const Icon(Icons.calendar_today, size: AppNumbers.calendarIconSize), // 定数を利用
-                      const SizedBox(width: AppNumbers.smallSpacing), // 定数を利用
-                      Text(dateText),
+                      const Icon(
+                        Icons.calendar_today, 
+                        size: AppNumbers.calendarIconSize,
+                      ),
+                      const SizedBox(width: AppNumbers.smallSpacing),
+                      Text(
+                        dateText,
+                        style: const TextStyle(
+                          fontSize: AppNumbers.calendarFontSize,
+                          // fontWeight: FontWeight.bold,
+                          color: AppColors.mainText,
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
 
-              const SizedBox(height: AppNumbers.smallSpacing), // 定数を利用
-              const Text(AppStrings.typeSelectionTitle, style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppNumbers.sectionTitleFontSize)), // 定数を利用
+              const SizedBox(height: AppNumbers.smallSpacing),
+              const Text(AppStrings.typeSelectionTitle, style: TextStyle(fontWeight: FontWeight.bold, fontSize: AppNumbers.sectionTitleFontSize)),
 
-              const SizedBox(height: AppNumbers.defaultPadding), // 定数を利用
+              const SizedBox(height: AppNumbers.defaultPadding),
 
               Row(
                 children: [
-                  _typeButton(AppStrings.decreaseTypeLabel, MoneyType.decrease, AppColors.decrease), // 定数を利用
-                  const SizedBox(width: AppNumbers.smallSpacing), // 定数を利用
-                  _typeButton(AppStrings.increaseTypeLabel, MoneyType.increase, AppColors.increase), // 定数を利用
+                  _typeButton(AppStrings.decreaseTypeLabel, MoneyType.decrease, AppColors.decrease),
+                  const SizedBox(width: AppNumbers.smallSpacing),
+                  _typeButton(AppStrings.increaseTypeLabel, MoneyType.increase, AppColors.increase),
                 ],
               ),
-              const SizedBox(height: AppNumbers.smallSpacing), // 定数を利用
+              const SizedBox(height: AppNumbers.smallSpacing),
               Row(
                 children: [
-                  _typeButton(AppStrings.bankInTypeLabel, MoneyType.bankIn, AppColors.bank), // 定数を利用
-                  const SizedBox(width: AppNumbers.smallSpacing), // 定数を利用
-                  _typeButton(AppStrings.bankOutTypeLabel, MoneyType.bankOut, AppColors.bank), // 定数を利用
+                  _typeButton(AppStrings.initialMemoBankIn, MoneyType.bankIn, AppColors.bank),
+                  const SizedBox(width: AppNumbers.smallSpacing),
+                  _typeButton(AppStrings.initialMemoBankOut, MoneyType.bankOut, AppColors.bank),
                 ],
               ),
 
@@ -265,9 +296,38 @@ class _InputPageState extends State<InputPage> {
                 keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
+                  ThousandsSeparatorInputFormatter(),
                 ],
-                decoration: const InputDecoration(
-                  hintText: AppStrings.amountHint,
+                style: const TextStyle(
+                  fontSize: AppNumbers.amountTextFontSize,
+                  height: 1.2,
+                ),
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.symmetric(vertical: 4),
+                  
+                  // 1. prefix ではなく prefixIcon に変更（これで常に表示される）
+                  prefixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    // 2. 数字（TextFieldの文字）の底辺に合わせるための設定
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      const SizedBox(width: 0), // 左端の余白調整用
+                      Text(
+                        '¥ ',
+                        style: TextStyle(
+                          fontSize: AppNumbers.amountTextFontSize, 
+                          color: AppColors.mainText,
+                          // 3. ここが重要：Rowの中でもTextFieldの文字と揃うように高さを微調整
+                          height: 1.2, 
+                        ),
+                      ),
+                    ],
+                  ),
+                  // 4. prefixIconの余計な余白を消して、文字に近づける
+                  prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                  
+                  hintText: '0', // AppStrings.amountHint は '0' に戻してOK
                 ),
               ),
 
@@ -278,29 +338,37 @@ class _InputPageState extends State<InputPage> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text(AppStrings.cancelButtonText), // 定数を利用
+                      style: OutlinedButton.styleFrom(
+                        // OutlinedButtonの文字色をメインの黒に
+                        foregroundColor: AppColors.mainText, 
+                        side: const BorderSide(color: Colors.grey), // 枠線の色も変えたい場合はここ
+                        minimumSize: const Size(0, 50),
+                      ),
+                      child: const Text(AppStrings.cancelButtonText),
                     ),
                   ),
-                  const SizedBox(width: AppNumbers.mediumSpacing), // 定数を利用
+                  const SizedBox(width: AppNumbers.mediumSpacing),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _save,
                       style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
                         backgroundColor: AppColors.pink,
+                        minimumSize: const Size(0, 50),
                       ),
-                      child: Text(isEdit ? AppStrings.updateButtonText : AppStrings.recordButtonText), // 定数を利用
+                      child: Text(isEdit ? AppStrings.updateButtonText : AppStrings.recordButtonText),
                     ),
                   ),
                 ],
               ),
 
               if (isEdit) ...[
-                const SizedBox(height: AppNumbers.mediumSpacing), // 定数を利用
+                const SizedBox(height: AppNumbers.mediumSpacing),
                 Center(
                   child: TextButton.icon(
                     icon: const Icon(Icons.delete, color: Colors.red),
                     label: const Text(
-                      AppStrings.deleteButtonTextInput, // 定数を利用
+                      AppStrings.deleteButtonTextInput,
                       style: TextStyle(color: Colors.red),
                     ),
                     onPressed: _delete,
@@ -315,3 +383,4 @@ class _InputPageState extends State<InputPage> {
   }
 
 }
+
