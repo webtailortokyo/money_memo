@@ -6,6 +6,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'dart:developer';
 import 'package:vibration/vibration.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:lottie/lottie.dart';
 
 import '../models/money_type.dart';
 import '../models/money_entry.dart';
@@ -126,11 +128,98 @@ class _InputPageState extends State<InputPage> {
       box.add(newEntry);
     }
 
-    if (await Vibration.hasVibrator() ?? false) {
-      Vibration.vibrate(duration: 1000, amplitude: 128);
+    // フィードバック再生（エラーがあっても画面は閉じるようにtry-finallyまたはcatchで保護）
+    try {
+      await _playFeedback(selectedType);
+    } catch (e) {
+      log('Feedback error: $e');
     }
 
-    Navigator.pop(context);
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
+  }
+
+  Future<void> _playFeedback(MoneyType type) async {
+    // タイプごとの設定
+    String soundFile;
+    String lottieFile;
+    int vibrationDuration;
+
+    switch (type) {
+      case MoneyType.increase:
+        soundFile = 'sounds/increase.mp3';
+        lottieFile = 'assets/lottie/increase.json';
+        vibrationDuration = 1000;
+        break;
+      case MoneyType.decrease:
+        soundFile = 'sounds/decrease.mp3';
+        lottieFile = 'assets/lottie/decrease.json';
+        vibrationDuration = 500;
+        break;
+      case MoneyType.bankIn:
+        soundFile = 'sounds/bank.mp3';
+        lottieFile = 'assets/lottie/bank_in.json';
+        vibrationDuration = 500;
+        break;
+      case MoneyType.bankOut:
+        soundFile = 'sounds/bank.mp3';
+        lottieFile = 'assets/lottie/bank_out.json';
+        vibrationDuration = 500;
+        break;
+    }
+
+    // 1. 振動と音を並列再生（待たなくてよいが、音は再生開始を確認したいのでawaitしても良い）
+    final vibrationFuture = Vibration.hasVibrator().then((hasVibrator) {
+      if (hasVibrator ?? false) {
+        Vibration.vibrate(duration: vibrationDuration);
+      }
+    });
+
+    final soundFuture = AudioPlayer().play(AssetSource(soundFile));
+
+    // エラーハンドリングのためFuture.waitで囲むが、失敗しても次へ進む
+    await Future.wait([
+      vibrationFuture.catchError((_) {}), 
+      soundFuture.catchError((_) {})
+    ]);
+
+    // 2. アニメーションダイアログ表示
+    if (!mounted) return;
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        // 画面幅の80%と300pxの小さい方を採用（はみ出し防止）
+        final screenWidth = MediaQuery.of(context).size.width;
+        final size = (screenWidth * 0.8 < 300) ? screenWidth * 0.8 : 300.0;
+
+        return Center(
+          child: Lottie.asset(
+            lottieFile,
+            width: size,
+            height: size,
+            repeat: false,
+            onLoaded: (composition) {
+              // アニメーション時間分待ってからダイアログを閉じる
+              Future.delayed(composition.duration, () {
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
+              });
+            },
+            // 読み込みエラー時のフォールバック（画面がロックされないように）
+            errorBuilder: (context, error, stackTrace) {
+              Future.delayed(Duration.zero, () {
+                 if (context.mounted) Navigator.of(context).pop();
+              });
+              return const SizedBox();
+            },
+          ),
+        );
+      },
+    );
   }
 
   String get memoLabel {
