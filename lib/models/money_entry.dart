@@ -39,9 +39,7 @@ class MoneyEntry extends HiveObject {
         return '-¥$formattedAmount';
       case 'increase':
         return '+¥$formattedAmount';
-      case 'bankIn':
-      case 'bankOut':
-        return '¥$formattedAmount';
+
       default:
         return '¥$formattedAmount';
     }

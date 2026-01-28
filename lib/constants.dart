@@ -15,11 +15,9 @@ class AppStrings {
   static const String inputErrorSnackbarMessage = '項目と金額を入力してください';
   static const String memoLabelDecrease = '何に？';
   static const String memoLabelIncrease = '何で？';
-  static const String memoLabelBank = 'メモ';
   static const String memoHintDecrease = '例：アイス、ゲーム';
   static const String memoHintIncrease = '例：お小遣い、プレゼント';
-  static const String memoHintBank = '例：〇〇銀行';
-  static const String typeSelectionTitle = '減った？ 増えた？ 銀行？';
+  static const String typeSelectionTitle = '減った？ 増えた？';
   static const String amountLabel = 'いくら？';
   static const String amountHint = '0';
   static const String updateButtonText = '更新する';
@@ -28,9 +26,7 @@ class AppStrings {
   static const String editRecordTitle = '記録を編集する';
   static const String newRecordTitle = '新しく記録する';
 
-  // input_page.dart のメモの初期値
-  static const String initialMemoBankIn = '銀行に預けた';
-  static const String initialMemoBankOut = '銀行から出した';
+
 
   // period_page.dart
   static const String periodPageTitle = '期間で見る';
@@ -43,11 +39,8 @@ class AppStrings {
   static const String detailSectionTitle = '■ 内訳';
   static const String increaseTypeLabel = '増えた';
   static const String decreaseTypeLabel = '減った';
-  static const String bankInTypeLabel = '銀行入金';
-  static const String bankOutTypeLabel = '銀行出金';
-  static const String bankBalanceLabel = '銀行残高';
   static const String clipboardHeader = '日付\t内容\t種別\t金額';
-  static const String clipboardNote = '※銀行については「銀行に預けた」を＋、「銀行から出した」を－として扱っています（手元のお金ではなく銀行残高基準）\n※タブ区切りテキスト形式のため、Excel等の表計算ソフトへの貼り付けが可能です\n';
+  static const String clipboardNote = '※タブ区切りテキスト形式のため、Excel等の表計算ソフトへの貼り付けが可能です\n';
 
 }
 
@@ -93,6 +86,4 @@ class HiveConstants {
 class MoneyEntryTypes {
   static const String increase = 'increase';
   static const String decrease = 'decrease';
-  static const String bankIn = 'bankIn';
-  static const String bankOut = 'bankOut';
 }

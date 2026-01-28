@@ -9,7 +9,6 @@ import '../models/money_entry.dart';
 import '../theme.dart';
 import '../widgets/money_entry_card.dart';
 import '../widgets/money_amount_text.dart';
-import '../widgets/bank_amount_row.dart';
 import '../widgets/period_date_selector.dart';
 import '../widgets/total_amount_row.dart';
 import '../utils/format_utils.dart';
@@ -91,7 +90,7 @@ class _PeriodPageState extends State<PeriodPage> {
 
           int increase = 0;
           int decrease = 0;
-          int bank = 0;
+
 
           for (final e in filtered) {
             switch (e.type) {
@@ -101,12 +100,7 @@ class _PeriodPageState extends State<PeriodPage> {
               case MoneyEntryTypes.decrease:
                 decrease += e.amount;
                 break;
-              case MoneyEntryTypes.bankIn:
-                bank += e.amount;
-                break;
-              case MoneyEntryTypes.bankOut:
-                bank -= e.amount;
-                break;
+
             }
           }
 
@@ -165,11 +159,10 @@ class _PeriodPageState extends State<PeriodPage> {
                       final text = StringBuffer()
                         ..writeln('${periodLabel} の記録\n');
 
-                       // 🔹 合計
+                      // 🔹 合計
                       text.writeln(AppStrings.totalSectionTitle);
                       text.writeln('${AppStrings.increaseTypeLabel}\t$increase');
                       text.writeln('${AppStrings.decreaseTypeLabel}\t$decrease');
-                      text.writeln('${AppStrings.bankBalanceLabel}\t$bank');
                       text.writeln(''); // 空行
 
 
@@ -193,14 +186,7 @@ class _PeriodPageState extends State<PeriodPage> {
                             typeLabel = AppStrings.decreaseTypeLabel;
                             signedAmount = -e.amount; // －
                             break;
-                          case MoneyEntryTypes.bankIn:
-                            typeLabel = AppStrings.bankInTypeLabel;
-                            signedAmount = e.amount; // ＋
-                            break;
-                          case MoneyEntryTypes.bankOut:
-                            typeLabel = AppStrings.bankOutTypeLabel;
-                            signedAmount = -e.amount; // －
-                            break;
+
                           default:
                             typeLabel = '';
                             signedAmount = e.amount;
@@ -268,14 +254,7 @@ class _PeriodPageState extends State<PeriodPage> {
                         color: AppColors.decreaseAmount,
                         formatAmount: formatAmount,
                       ),
-                      const SizedBox(height: AppNumbers.smallSpacing),
-                      TotalAmountRow(
-                        label: AppStrings.bankBalanceLabel,
-                        value: bank,
-                        color: AppColors.bankAmount,
-                        isBank: true,
-                        formatAmount: formatAmount,
-                      ),
+
                     ],
                   ),
                 ),

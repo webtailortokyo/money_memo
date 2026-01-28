@@ -74,14 +74,9 @@ class _InputPageState extends State<InputPage> {
       if (isEdit) return;
 
       // タイプごとにメモを自動更新
-      if (type == MoneyType.bankIn) {
-        memoController.text = AppStrings.initialMemoBankIn;
-      } else if (type == MoneyType.bankOut) {
-        memoController.text = AppStrings.initialMemoBankOut;
-      } else {
-        // 「減った」「増えた」はメモを空にする
-        memoController.clear();
-      }
+
+      // 「減った」「増えた」はメモを空にする
+      memoController.clear();
     });
   }
 
@@ -157,16 +152,7 @@ class _InputPageState extends State<InputPage> {
         lottieFile = 'assets/lottie/decrease.json';
         vibrationDuration = 500;
         break;
-      case MoneyType.bankIn:
-        soundFile = 'sounds/bank.mp3';
-        lottieFile = 'assets/lottie/bank_in.json';
-        vibrationDuration = 500;
-        break;
-      case MoneyType.bankOut:
-        soundFile = 'sounds/bank.mp3';
-        lottieFile = 'assets/lottie/bank_out.json';
-        vibrationDuration = 500;
-        break;
+
     }
 
     // 1. 振動と音を並列再生（待たなくてよいが、音は再生開始を確認したいのでawaitしても良い）
@@ -228,9 +214,7 @@ class _InputPageState extends State<InputPage> {
         return AppStrings.memoLabelDecrease;
       case MoneyType.increase:
         return AppStrings.memoLabelIncrease;
-      case MoneyType.bankIn:
-      case MoneyType.bankOut:
-        return AppStrings.memoLabelBank;
+
     }
   }
 
@@ -240,9 +224,7 @@ class _InputPageState extends State<InputPage> {
         return AppStrings.memoHintDecrease;
       case MoneyType.increase:
         return AppStrings.memoHintIncrease;
-      case MoneyType.bankIn:
-      case MoneyType.bankOut:
-        return AppStrings.memoHintBank;
+
     }
   }
 
@@ -262,7 +244,7 @@ class _InputPageState extends State<InputPage> {
                     ? AppColors.decreaseBg
                     : type == MoneyType.increase
                         ? AppColors.increaseBg
-                        : AppColors.bankBg,
+                        : Colors.transparent, // Default fallback instead of bankBg
             borderRadius: BorderRadius.circular(AppNumbers.typeButtonBorderRadius),
           ),
           child: Align(
@@ -353,14 +335,8 @@ class _InputPageState extends State<InputPage> {
                   _typeButton(AppStrings.increaseTypeLabel, MoneyType.increase, AppColors.increase),
                 ],
               ),
-              const SizedBox(height: AppNumbers.smallSpacing),
-              Row(
-                children: [
-                  _typeButton(AppStrings.initialMemoBankIn, MoneyType.bankIn, AppColors.bank),
-                  const SizedBox(width: AppNumbers.smallSpacing),
-                  _typeButton(AppStrings.initialMemoBankOut, MoneyType.bankOut, AppColors.bank),
-                ],
-              ),
+
+
 
               const SizedBox(height: AppNumbers.defaultPadding + AppNumbers.smallSpacing),
 

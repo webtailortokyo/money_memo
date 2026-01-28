@@ -24,9 +24,7 @@ class MoneyEntryCard extends StatelessWidget {
         return AppColors.decrease;
       case 'increase':
         return AppColors.increase;
-      case 'bankIn':
-      case 'bankOut':
-        return AppColors.bank;
+
       default:
         return Colors.grey;
     }
@@ -39,9 +37,7 @@ class MoneyEntryCard extends StatelessWidget {
         return AppColors.decreaseBg;
       case 'increase':
         return AppColors.increaseBg;
-      case 'bankIn':
-      case 'bankOut':
-        return AppColors.bankBg;
+
       default:
         return AppColors.sectionBg;
     }
@@ -54,15 +50,13 @@ class MoneyEntryCard extends StatelessWidget {
         return AppColors.decreaseAmount;
       case 'increase':
         return AppColors.increaseAmount;
-      case 'bankIn':
-      case 'bankOut':
-        return AppColors.bankAmount;
+
       default:
         return Colors.grey;
     }
   }
 
-  bool get _isBank => entry.type == 'bankIn' || entry.type == 'bankOut';
+
 
   @override
   Widget build(BuildContext context) {
@@ -139,33 +133,7 @@ class MoneyEntryCard extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          if (entry.type == 'bankIn') ...[
-                            Icon(
-                              Icons.download,
-                              size: 18,
-                              color: AppColors.bank,
-                            ),
-                            const SizedBox(width: 4),
-                            Icon(
-                              Icons.account_balance,
-                              size: 18,
-                              color: AppColors.bank,
-                            ),
-                            const SizedBox(width: 6),
-                          ] else if (entry.type == 'bankOut') ...[
-                            Icon(
-                              Icons.upload,
-                              size: 18,
-                              color: AppColors.bank,
-                            ),
-                            const SizedBox(width: 4),
-                            Icon(
-                              Icons.account_balance,
-                              size: 18,
-                              color: AppColors.bank,
-                            ),
-                            const SizedBox(width: 6),
-                          ],
+
 
                           /// 金額
                           MoneyAmountText(

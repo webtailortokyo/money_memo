@@ -16,10 +16,7 @@ class AppColors {
   static const increaseBg = Color(0xFFDBFCE7);
   static const increaseAmount = Color(0xFF008236);
 
-  // 銀行
-  static const bank = Color(0xFF90A1B9);
-  static const bankBg = Color(0xFFF1F5F9);
-  static const bankAmount = Color(0xFF45556C);
+
 
   // period_pageセクション背景
   static const sectionBg = Color(0xFFFFF2D9);

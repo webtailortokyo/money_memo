@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:money_memo/widgets/bank_amount_row.dart';
+
 import 'package:money_memo/widgets/money_amount_text.dart';
 import '../constants.dart';
 
@@ -9,14 +9,14 @@ class TotalAmountRow extends StatelessWidget {
     required this.label,
     required this.value,
     required this.color,
-    this.isBank = false,
+
     required this.formatAmount,
     });
 
     final String label;
     final int value;
     final Color color;
-    final bool isBank;
+
     final String Function(int) formatAmount;
 
     @override
@@ -49,9 +49,7 @@ class TotalAmountRow extends StatelessWidget {
         children: [
         Text(label,
             style: TextStyle(fontWeight: FontWeight.bold, color: color, fontSize: AppNumbers.sectionTitleFontSize)),
-        isBank
-            ? BankAmountRow(amountText: amountTextWidget)
-            : amountTextWidget,
+        amountTextWidget,
         ],
     );
     }
